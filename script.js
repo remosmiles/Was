@@ -19,6 +19,51 @@ function drawMatrix() {
         drops[i]++;
     }
 }
+
+// ... (Matrix-Code und Shake-Code bleiben gleich) ...
+
+function checkQuiz() {
+    const userAnswer = document.getElementById('quiz-input').value.trim();
+    
+    // Schritt 2 ausblenden
+    document.getElementById('step2').classList.add('hidden-step');
+    
+    // Chat-Terminal (Schritt 4) sofort einblenden
+    const chatStep = document.getElementById('step4');
+    chatStep.classList.remove('hidden-step');
+    
+    // Der Opa antwortet sofort ungefragt auf die Eingabe
+    const initialGreeting = `"${userAnswer}"? Ernsthaft? Das ist die falscheste Antwort, die ich je gehört habe. Du hast ja keine Ahnung. Komm mir bloß nicht nochmal mit so einem Schwachsinn.`;
+    displayMessage(userAnswer, "user");
+    displayMessage(initialGreeting, "bot");
+    
+    document.getElementById('chat-input').focus();
+}
+
+// Die Mathe-Funktion (proceedToMath) wird hierbei übersprungen, 
+// außer du möchtest sie später noch einbauen.
+// ... (Matrix-Code und Shake-Code bleiben gleich) ...
+
+function checkQuiz() {
+    const userAnswer = document.getElementById('quiz-input').value.trim();
+    
+    // Schritt 2 ausblenden
+    document.getElementById('step2').classList.add('hidden-step');
+    
+    // Chat-Terminal (Schritt 4) sofort einblenden
+    const chatStep = document.getElementById('step4');
+    chatStep.classList.remove('hidden-step');
+    
+    // Der Opa antwortet sofort ungefragt auf die Eingabe
+    const initialGreeting = `"${userAnswer}"? Ernsthaft? Das ist die falscheste Antwort, die ich je gehört habe. Du hast ja keine Ahnung. Komm mir bloß nicht nochmal mit so einem Schwachsinn.`;
+    displayMessage(userAnswer, "user");
+    displayMessage(initialGreeting, "bot");
+    
+    document.getElementById('chat-input').focus();
+}
+
+// Die Mathe-Funktion (proceedToMath) wird hierbei übersprungen, 
+// außer du möchtest sie später noch einbauen.
 setInterval(drawMatrix, 35);
 
 // LOGIK
