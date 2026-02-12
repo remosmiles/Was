@@ -1,0 +1,70 @@
+<body id="main-body" class="flex items-center justify-center min-h-screen">
+    
+    <canvas id="matrix-canvas"></canvas>
+
+    <div id="step1" class="step-container text-center p-10 border border-slate-700 rounded-3xl shadow-2xl max-w-md w-full">
+        <h1 class="text-3xl font-extrabold mb-2 text-white">System-Zugriff</h1>
+        <p class="text-slate-500 text-xs italic mb-8">Identifizierung erforderlich</p>
+        
+        <input type="text" id="entry-input" 
+               class="bg-slate-800 border border-slate-600 p-4 rounded-xl w-full text-center text-white mb-6 outline-none focus:ring-2 focus:ring-green-500" 
+               placeholder="Was suchst du hier?">
+        
+        <button onclick="triggerShake()" 
+                class="w-full bg-blue-600 hover:bg-blue-500 py-4 rounded-xl font-bold uppercase text-white transition-all">
+            Antwort bestätigen
+        </button>
+        
+        <div class="mt-8 pt-6 border-t border-slate-800">
+            <p class="text-[10px] text-slate-500 uppercase tracking-[0.2em] mb-2 font-bold">Mögliche Parameter:</p>
+            <div class="flex justify-around text-[10px] text-green-500 font-mono">
+                <span>Hoffnung</span><span>Mut</span><span>Freude</span><span>Erregung</span>
+            </div>
+        </div>
+    </div>
+
+    <div id="step2" class="hidden-step step-container text-center p-10 border border-slate-700 rounded-3xl shadow-2xl max-w-md w-full">
+        <h2 class="text-2xl font-bold mb-4 text-white">IDENTITÄTS-CHECK</h2>
+        <p class="mb-6 text-slate-400">Wer ist der beste Polizist?</p>
+        <input type="text" id="quiz-input" class="bg-slate-800 border border-slate-600 p-4 rounded-xl w-full mb-6 text-center text-white outline-none">
+        <button onclick="checkQuiz()" class="w-full bg-white text-black py-4 rounded-xl font-bold">PRÜFEN</button>
+        
+        <p class="mt-6 text-blue-400 text-[10px] uppercase tracking-widest font-bold">(Tipp: Du bist es nicht)</p>
+    </div>
+    
+    ```
+
+---
+
+### 3. Letzter Check für `script.js`
+Stelle sicher, dass die Matrix-Funktion ganz oben steht und die `columns` korrekt berechnet werden:
+
+```javascript
+const canvas = document.getElementById('matrix-canvas');
+const ctx = canvas.getContext('2d');
+
+// WICHTIG: Fenstergröße anpassen
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+const characters = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ$+-*/=%";
+const fontSize = 16;
+const columns = Math.floor(canvas.width / fontSize);
+const drops = Array(columns).fill(1);
+
+function drawMatrix() {
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = '#0F0';
+    ctx.font = fontSize + 'px monospace';
+
+    for (let i = 0; i < drops.length; i++) {
+        const text = characters.charAt(Math.floor(Math.random() * characters.length));
+        ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+        if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
+        drops[i]++;
+    }
+}
+setInterval(drawMatrix, 35);
+
+// ... Hier folgt dein triggerShake(), checkQuiz() etc. ...
