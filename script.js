@@ -77,8 +77,18 @@ function proceedToMath() {
 }
 
 function win() {
-    document.getElementById('step3').classList.add('hidden-step');
-    document.getElementById('step4').classList.remove('hidden-step');
+    // 1. Mathe-Box ausblenden
+    const mathStep = document.getElementById('step3');
+    mathStep.classList.add('hidden-step');
+    
+    // 2. Chat-Terminal einblenden
+    const chatStep = document.getElementById('step4');
+    chatStep.classList.remove('hidden-step');
+    
+    // 3. Fokus direkt auf das Eingabefeld setzen, damit man sofort tippen kann
+    document.getElementById('chat-input').focus();
+    
+    console.log("System-Opa wurde aktiviert."); // Zum Testen in der F12-Konsole
 }
 
 // CHAT FUNKTION
