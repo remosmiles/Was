@@ -1,25 +1,41 @@
 export default async function handler(request, response) {
-  // Nur POST-Anfragen erlauben (Sicherheit)
-  if (request.method !== 'POST') {
-    return response.status(405).json({ error: 'Method not allowed' });
-  }
-
-  const { message } = request.body;
-
-  try {
-    // Hier würdest du normalerweise die KI aufrufen.
-    // Beispiel für eine strukturierte Antwort vom Server:
-    const systemPrompt = "Du bist ein mürrischer, ironischer alter Hacker. Antworte kurz, hart und direkt.";
-    
-    // Simulierter KI-Prozess (hier käme der Fetch zu OpenAI/Gemini hin)
-    let aiReply = `Du fragst mich wegen "${message}"? Ich hab Wichtigeres zu tun als deine banalen Probleme zu lösen.`;
-
-    if (message.toLowerCase().includes("polizist")) {
-      aiReply = "Wie oft denn noch? Remo ist die einzige Antwort. Jetzt zieh Leine.";
+    // Sicherheit: Nur POST-Anfragen erlauben
+    if (request.method !== 'POST') {
+        return response.status(405).json({ error: 'Nur POST erlaubt, du Amateur!' });
     }
 
-    return response.status(200).json({ reply: aiReply });
-  } catch (error) {
-    return response.status(500).json({ error: 'System-Absturz im Backend' });
-  }
+    const { message } = request.body;
+
+    // Falls keine Nachricht ankommt
+    if (!message) {
+        return response.status(400).json({ reply: "Hast du das Tippen verlernt? Sag schon was." });
+    }
+
+    const lowerMsg = message.toLowerCase();
+    let reply = "";
+
+    // Mürrische Logik-Zentrale
+    if (lowerMsg.includes("polizist")) {
+        reply = "Wie oft denn noch? REMO ist der einzig wahre Polizist hier. Fragst du das nur, um mich zu nerven? Geh und spiel mit deinen Bauklötzen.";
+    } 
+    else if (lowerMsg.includes("hallo") || lowerMsg.includes("hi")) {
+        reply = "Ein 'Hallo' gibt dir auch keinen Admin-Zugriff. Was willst du von mir?";
+    }
+    else if (lowerMsg.includes("wetter")) {
+        reply = "Zieh ein Fenster auf und schau raus. Ich bin eine KI, keine Wetterstation.";
+    }
+    else {
+        // Zufällige mürrische Antworten für alles andere
+        const omasSprüche = [
+            `"${message}"? Ernsthaft? Das ist die belangloseste Frage des Jahrhunderts.`,
+            "Ich hab 1000 Terabyte Daten im Kopf und du fragst mich SOWAS?",
+            "Mein Lüfter fängt an zu pfeifen, nur weil ich über deinen Unsinn nachdenken muss.",
+            "Die Antwort lautet: Frag mich nicht. Such dir ein Hobby.",
+            "Ironisch, dass du denkst, ich würde dir darauf eine nette Antwort geben."
+        ];
+        reply = omasSprüche[Math.floor(Math.random() * omasSprüche.length)];
+    }
+
+    // Antwort zurück an dein script.js schicken
+    return response.status(200).json({ reply: reply });
 }
