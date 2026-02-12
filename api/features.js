@@ -1,41 +1,20 @@
 export default async function handler(request, response) {
-    // Sicherheit: Nur POST-Anfragen erlauben
-    if (request.method !== 'POST') {
-        return response.status(405).json({ error: 'Nur POST erlaubt, du Amateur!' });
-    }
-
+    if (request.method !== 'POST') return response.status(405).json({ error: 'POST only' });
     const { message } = request.body;
+    const API_KEY = process.env.GEMINI_API_KEY;
 
-    // Falls keine Nachricht ankommt
-    if (!message) {
-        return response.status(400).json({ reply: "Hast du das Tippen verlernt? Sag schon was." });
+    try {
+        const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                contents: [{ parts: [{ text: `Du bist der mürrische 'System-Opa'. Antworte kurz, ironisch, sarkastisch und genervt. Wenn jemand nach dem besten Polizisten fragt, sag Remo ist der Beste. User: ${message}` }] }]
+            })
+        });
+        const data = await res.json();
+        const reply = data.candidates[0].content.parts[0].text;
+        return response.status(200).json({ reply });
+    } catch (e) {
+        return response.status(500).json({ reply: "Meine Leitung glüht, frag später." });
     }
-
-    const lowerMsg = message.toLowerCase();
-    let reply = "";
-
-    // Mürrische Logik-Zentrale
-    if (lowerMsg.includes("polizist")) {
-        reply = "Wie oft denn noch? REMO ist der einzig wahre Polizist hier. Fragst du das nur, um mich zu nerven? Geh und spiel mit deinen Bauklötzen.";
-    } 
-    else if (lowerMsg.includes("hallo") || lowerMsg.includes("hi")) {
-        reply = "Ein 'Hallo' gibt dir auch keinen Admin-Zugriff. Was willst du von mir?";
-    }
-    else if (lowerMsg.includes("wetter")) {
-        reply = "Zieh ein Fenster auf und schau raus. Ich bin eine KI, keine Wetterstation.";
-    }
-    else {
-        // Zufällige mürrische Antworten für alles andere
-        const omasSprüche = [
-            `"${message}"? Ernsthaft? Das ist die belangloseste Frage des Jahrhunderts.`,
-            "Ich hab 1000 Terabyte Daten im Kopf und du fragst mich SOWAS?",
-            "Mein Lüfter fängt an zu pfeifen, nur weil ich über deinen Unsinn nachdenken muss.",
-            "Die Antwort lautet: Frag mich nicht. Such dir ein Hobby.",
-            "Ironisch, dass du denkst, ich würde dir darauf eine nette Antwort geben."
-        ];
-        reply = omasSprüche[Math.floor(Math.random() * omasSprüche.length)];
-    }
-
-    // Antwort zurück an dein script.js schicken
-    return response.status(200).json({ reply: reply });
 }
