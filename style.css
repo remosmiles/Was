@@ -6,31 +6,20 @@
     background: #020617;
 }
 
-body { margin: 0; padding: 0; overflow: hidden; }
-
 .step-container {
     background: rgba(15, 23, 42, 0.95);
-    backdrop-filter: blur(10px);
+    backdrop-filter: blur(8px);
 }
 
 .hidden-step { display: none !important; }
 
 @keyframes shake {
-    0% { transform: translate(2px, 2px); }
-    50% { transform: translate(-3px, -2px); }
-    100% { transform: translate(2px, 2px); }
+    0% { transform: translate(1px, 1px); }
+    50% { transform: translate(-2px, -1px); }
+    100% { transform: translate(1px, 1px); }
 }
 .shake-active { animation: shake 0.1s infinite; }
 
-@keyframes error-flash {
-    0%, 100% { background-color: #ff0000; }
-    50% { background-color: #000000; }
-}
-.error-overlay { animation: error-flash 0.1s infinite !important; }
-
-.fake-popup {
-    position: fixed; width: 200px; background: #c0c0c0; color: black;
-    border: 2px solid #fff; border-right-color: #808080; border-bottom-color: #808080;
-    z-index: 100; padding: 2px; font-family: sans-serif;
-}
-.popup-header { background: #000080; color: white; padding: 2px 5px; font-size: 11px; }
+/* Scrollbar für das Chatfenster */
+#chat-output::-webkit-scrollbar { width: 4px; }
+#chat-output::-webkit-scrollbar-thumb { background: #450a0a; }
