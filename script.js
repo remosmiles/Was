@@ -1,4 +1,4 @@
-// MATRIX
+// --- MATRIX BACKGROUND ---
 const canvas = document.getElementById('matrix-canvas');
 const ctx = canvas.getContext('2d');
 canvas.width = window.innerWidth;
@@ -19,133 +19,47 @@ function drawMatrix() {
         drops[i]++;
     }
 }
-
-// ... (Matrix-Code und Shake-Code bleiben gleich) ...
-
-function checkQuiz() {
-    const userAnswer = document.getElementById('quiz-input').value.trim();
-    
-    // Schritt 2 ausblenden
-    document.getElementById('step2').classList.add('hidden-step');
-    
-    // Chat-Terminal (Schritt 4) sofort einblenden
-    const chatStep = document.getElementById('step4');
-    chatStep.classList.remove('hidden-step');
-    
-    // Der Opa antwortet sofort ungefragt auf die Eingabe
-    const initialGreeting = `"${userAnswer}"? Ernsthaft? Das ist die falscheste Antwort, die ich je gehört habe. Du hast ja keine Ahnung. Komm mir bloß nicht nochmal mit so einem Schwachsinn.`;
-    displayMessage(userAnswer, "user");
-    displayMessage(initialGreeting, "bot");
-    
-    document.getElementById('chat-input').focus();
-}
-
-// Die Mathe-Funktion (proceedToMath) wird hierbei übersprungen, 
-// außer du möchtest sie später noch einbauen.
-// ... (Matrix-Code und Shake-Code bleiben gleich) ...
-
-function checkQuiz() {
-    const userAnswer = document.getElementById('quiz-input').value.trim();
-    
-    // Schritt 2 ausblenden
-    document.getElementById('step2').classList.add('hidden-step');
-    
-    // Chat-Terminal (Schritt 4) sofort einblenden
-    const chatStep = document.getElementById('step4');
-    chatStep.classList.remove('hidden-step');
-    
-    // Der Opa antwortet sofort ungefragt auf die Eingabe
-    const initialGreeting = `"${userAnswer}"? Ernsthaft? Das ist die falscheste Antwort, die ich je gehört habe. Du hast ja keine Ahnung. Komm mir bloß nicht nochmal mit so einem Schwachsinn.`;
-    displayMessage(userAnswer, "user");
-    displayMessage(initialGreeting, "bot");
-    
-    document.getElementById('chat-input').focus();
-}
-
-// Die Mathe-Funktion (proceedToMath) wird hierbei übersprungen, 
-// außer du möchtest sie später noch einbauen.
 setInterval(drawMatrix, 35);
 
-// LOGIK
-let result = 0;
-const errorSound = new Audio('https://actions.google.com/sounds/v1/emergency/emergency_siren_short.ogg');
-
+// --- NAVIGATION & LOGIK ---
 function triggerShake() {
-    if (document.getElementById('entry-input').value.trim() === "") return;
+    if (!document.getElementById('entry-input').value) return;
     document.getElementById('main-body').classList.add('shake-active');
     setTimeout(() => {
         document.getElementById('main-body').classList.remove('shake-active');
         document.getElementById('step1').classList.add('hidden-step');
         document.getElementById('step2').classList.remove('hidden-step');
-    }, 5000);
-}
-
-function checkQuiz() {
-    if (document.getElementById('quiz-input').value.trim().toLowerCase() === 'remo') proceedToMath();
-    else showChaos();
-}
-
-function showChaos() {
-    errorSound.play().catch(() => {});
-    const banner = document.getElementById('error-banner');
-    banner.classList.remove('hidden-step');
-    banner.classList.add('error-overlay');
-    for (let i = 0; i < 15; i++) {
-        const popup = document.createElement('div');
-        popup.className = 'fake-popup';
-        popup.style.top = Math.random() * 80 + "%";
-        popup.style.left = Math.random() * 80 + "%";
-        popup.innerHTML = `<div class="popup-header">Critical Error</div><p class="p-2 text-xs">Access Denied!</p>`;
-        document.body.appendChild(popup);
-    }
-    setTimeout(() => {
-        banner.classList.add('hidden-step');
-        document.querySelectorAll('.fake-popup').forEach(p => p.remove());
-        proceedToMath();
     }, 4000);
 }
 
-function proceedToMath() {
+function checkQuiz() {
+    const val = document.getElementById('quiz-input').value.trim();
     document.getElementById('step2').classList.add('hidden-step');
-    document.getElementById('step3').classList.remove('hidden-step');
-    const n1 = Math.floor(Math.random() * 50) + 10;
-    const n2 = Math.floor(Math.random() * 40) + 5;
-    result = n1 + n2;
-    document.getElementById('math-problem').innerText = `${n1} + ${n2}`;
-    let timeLeft = 7.0;
-    const timer = setInterval(() => {
-        timeLeft -= 0.05;
-        document.getElementById('timer-bar').style.width = (timeLeft / 7) * 100 + "%";
-        if (parseInt(document.getElementById('math-input').value) === result) { clearInterval(timer); win(); }
-        if (timeLeft <= 0) { clearInterval(timer); window.location.href = "https://www.bullenpower-uri.ch"; }
-    }, 50);
+    
+    // ZEIGE CHAT FENSTER
+    const chatWindow = document.getElementById('step4');
+    chatWindow.classList.remove('hidden-step');
+    
+    // Erste mürrische Reaktion
+    displayMessage(val, "user");
+    setTimeout(() => {
+        displayMessage(`"${val}"? Ernsthaft? Das ist die falscheste Antwort, die ich je in diesem System gesehen habe. Du hast keine Ahnung! Erklär dich oder verschwinde!`, "bot");
+    }, 500);
 }
 
-function win() {
-    // 1. Mathe-Box ausblenden
-    const mathStep = document.getElementById('step3');
-    mathStep.classList.add('hidden-step');
-    
-    // 2. Chat-Terminal einblenden
-    const chatStep = document.getElementById('step4');
-    chatStep.classList.remove('hidden-step');
-    
-    // 3. Fokus direkt auf das Eingabefeld setzen, damit man sofort tippen kann
-    document.getElementById('chat-input').focus();
-    
-    console.log("System-Opa wurde aktiviert."); // Zum Testen in der F12-Konsole
-}
-
-// CHAT FUNKTION
+// --- KI CHAT FUNKTION (GEMINI) ---
 async function handleChat(event) {
     if (event.key === 'Enter') {
         const input = document.getElementById('chat-input');
         const userMsg = input.value.trim();
         if (!userMsg) return;
+
         displayMessage(userMsg, "user");
         input.value = "";
-        const loadId = "load-" + Date.now();
-        displayMessage("...", "bot", loadId);
+
+        const loadId = "id-" + Date.now();
+        displayMessage("Opa tippt wütend...", "bot", loadId);
+
         try {
             const res = await fetch('/api/features', {
                 method: 'POST',
@@ -156,8 +70,7 @@ async function handleChat(event) {
             document.getElementById(loadId).remove();
             displayMessage(data.reply, "bot");
         } catch (e) {
-            document.getElementById(loadId).remove();
-            displayMessage("Verbindung abgebrochen.", "bot");
+            document.getElementById(loadId).innerText = "OPA: Leitung tot. Glück für dich.";
         }
     }
 }
